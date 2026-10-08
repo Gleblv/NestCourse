@@ -7,8 +7,9 @@ import { User } from '../users/users.model.js';
 import { UserRoles } from './user-roles.model.js';
 
 @Module({
-  providers: [RolesService],
   controllers: [RolesController],
+  providers: [RolesService],
   imports: [SequelizeModule.forFeature([Role, User, UserRoles])],
+  exports: [RolesService],
 })
 export class RolesModule {}
