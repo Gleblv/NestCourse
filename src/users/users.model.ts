@@ -22,32 +22,32 @@ export class User extends Model<User, UserCreationAttrs> {
     description: 'Unique email',
   })
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
-  email: string;
+  declare email: string;
 
   @ApiProperty({
     example: 'addnwUIU33423aa',
     description: 'User password',
   })
   @Column({ type: DataType.STRING, allowNull: false })
-  password: string;
+  declare password: string;
 
   @ApiProperty({
     example: 'true',
     description: 'User has ban or not',
   })
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  banned: boolean;
+  declare banned: boolean;
 
   @ApiProperty({
     example: 'Not allowed policy rules',
     description: 'User ban description',
   })
   @Column({ type: DataType.STRING, allowNull: true })
-  banReason: string;
+  declare banReason: string;
 
   @BelongsToMany(
     () => Role,
     () => UserRoles,
   )
-  roles: Role[];
+  declare roles: Role[];
 }
