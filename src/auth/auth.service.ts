@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user.dto.js';
 import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
@@ -12,7 +12,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userDto: CreateUserDto) {}
+  async login(userDto: CreateUserDto) {
+    const user = await this.validateUser(userDto);
+
+    return this.generateToken(user);
+  }
 
   async registration(userDto: CreateUserDto) {
     const candidate = await this.userService.getUserByEmail(userDto.email);
@@ -30,7 +34,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async generateToken(user: User) {
+  private async generateToken(user: User) {
     console.log('generate roken', user);
 
     const payload = { email: user.email, id: user.id, roles: user.roles };
@@ -38,5 +42,21 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  private async validateUser(userDto: CreateUserDto) {
+    const user = await this.userService.getUserByEmail(userDto.email);
+
+    if (!user) {
+      throw new UnauthorizedException({ message: 'Not find user by this email' });
+    }
+
+    const passwordEquals = await bycript.compare(userDto.password, user?.password);
+
+    if (user && passwordEquals) {
+      return user;
+    } else {
+      throw new UnauthorizedException({ message: 'Not valid password or email' });
+    }
   }
 }
