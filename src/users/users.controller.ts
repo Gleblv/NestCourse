@@ -6,6 +6,8 @@ import { User } from './users.model.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles-auth.decorator.js';
+import { AddRoleDto } from './dto/add-role.dto.js';
+import { BanUserDto } from './dto/ban-user.dto.js';
 
 @ApiTags('Users')
 @Controller('users')
@@ -37,5 +39,33 @@ export class UsersController {
   @Get()
   async getAll() {
     return this.userSerivice.getAllUsers();
+  }
+
+  @ApiOperation({
+    summary: 'Set role for user',
+  })
+  @ApiResponse({
+    status: 200,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
+  @Post('/role')
+  async addRole(@Body() addRoleDto: AddRoleDto) {
+    return this.userSerivice.addRole(addRoleDto);
+  }
+
+  @ApiOperation({
+    summary: 'Ban user',
+  })
+  @ApiResponse({
+    status: 200,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
+  @Post('/ban')
+  async ban(@Body() banUserDto: BanUserDto) {
+    return this.userSerivice.ban(banUserDto);
   }
 }
